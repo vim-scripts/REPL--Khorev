@@ -1,0 +1,51 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4336
+
+A script to interact with interpreters that have REPL.
+Main features:
+* non-intrusive
+* cross-platform (you need to install AND build Vimproc from https://github.com/Shougo/vimproc)
+* syntax highlighting is supported
+* easy to customise and add new interpreters (see plugin/repl.vim for details)
+
+Interpreters supported out of box:
+Shell: bash, tcsh, cmd.exe
+Haskell: GHCi, Hugs
+Scheme: Racket, Chicken
+GNU R
+Ocaml
+Octave
+Python
+Computer algebra: REDUCE, Maxima
+
+Commands:
+ :Open<YourInterpreter> <ExtraArguments> - start session
+ e.g.
+  :OpenGHCi to start GHCi 
+  :OpenGHCi! to forcefully start a new session in a new window
+
+ :CloseRepl (local to the repl window) - disconnect REPL
+ :CloseRepl! - disconnect and wipeout the buffer
+ :SaveInput <filename> - save input lines, use ! to force overwrite
+
+Keybinding:
+ global:
+  <Leader>e - in normal mode: send current line to the interpreter, in visual mode: send selection
+
+Local to the REPL window (normal mode only)
+  <Return> - send current command to the interpreter
+  <C-J> - copy current command to the command prompt
+  <C-K> - recall previous command to the command prompt
+  <count>[[ - navigate to the start of the current or previous command
+  <count>]] - navigate to the start of the next command
+  <count>[] - go to the end of the previous command
+  <count>][ - go to the end of current or the next command
+
+The following function can be used to define your own mappings or autocommands:
+  repl#SendText(bufOrType, text)
+    bufOrType: buffer number or its type ('' means currently active buffer)
+    text: a list of strings to join and send to REPL
+
+Hints:
+ You may edit and re-execute commands and the plugin should update output using its markers
+
+Feel free to send you comments. Especially I would like to hear what autocommands are worth using besides CursorHold
