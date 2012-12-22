@@ -1,13 +1,16 @@
 " REPL plugin to interact with interpreters for various programming languages
 " Author: Sergey Khorev <sergey.khorev@gmail.com>
-" Last Change:	$HGLastChangedDate: 2012-12-03 11:34 +0400 $
+" Last Change:	$HGLastChangedDate: 2012-12-21 20:45 +0400 $
+" Home Page:  http://www.vim.org/scripts/script.php?script_id=4336
+"             https://bitbucket.org/khorser/vim-repl
+"             https://github.com/khorser/vim-repl
 "
 " Prerequisites: you need to install AND build Vimproc (https://github.com/Shougo/vimproc)
 "
 " Commands:
 " :Open<YourInterpreter> <ExtraArguments> - start session
 " e.g.
-"  :OpenGHCi to start GHCi 
+"  :OpenGHCi to start GHCi
 "  :OpenGHCi! to forcefully start a new session in a new window
 
 " :CloseRepl (local to the repl window) - disconnect REPL
@@ -31,11 +34,32 @@
 " Keybinding and syntax highlighting heavily use specific markers,
 "   you tamper with the markers on your own risk
 "
+" Functions:
+" The following function can be used to define your own mappings or
+" autocommands:
+" repl#SendText(bufOrType, text)
+"   bufOrType: buffer number or its type ('' means currently active buffer)
+"   text: a list of strings to join and send to REPL
+"   NOTE: the function will not open a REPL window
+"
+" e.g. to show the type of the expression in the current line in GHCi
+"   (in real life you probably would want to use ghc-mod)
+"   nmap <leader>t :call repl#SendText('GHCi', [':t', getline('.')])<cr>
+"
+" show information about visual selection:
+"   vmap <leader>i :call repl#SendText('GHCi', insert(repl#GetSelection(), ':i'))<cr>
+"
 " Hints:
 " You may edit and re-execute commands and the plugin should update output
 "   using markers
 " Also feel free to delete unneeded text, just try to keep the layout
-" Session transcript can be saved with "1,$w YourFileName"
+" The full transcript of the session (except deleted lines) can be saved with
+"     "1,$w YourFileName"
+"
+" Autocommands can be used to add settings specific to particular interpreters
+" like:
+"   autocmd FileType repl :if expand('<afile>')=~#'^\d\+GHCi$' | <setup GHCi mappings> | endif  
+"
 "
 " Customisation:
 " Define g:replUserDefaults and g:replUserTypes
@@ -67,7 +91,7 @@ if v:version < 703
   finish
 endif
 
-let g:ReplDefaults = 
+let g:ReplDefaults =
       \{'command' : '',
       \ 'init'    : '',
       \ 'prompt'  : '^[^>]*>',
@@ -110,7 +134,7 @@ let g:ReplTypes =
       \ 'init'    : '',
       \ 'prompt'  : '\m\C^(%i\d\+)',
       \ 'syntax'  : 'maxima'}
-  \, 'Ocaml':
+  \, 'OCaml':
       \{'command' : 'ocaml',
       \ 'init'    : 'Toploop.read_interactive_input := let old = !Toploop.read_interactive_input in fun prompt buffer len -> old "\nocaml> " buffer len ;;',
       \ 'prompt'  : '\m\C^ocaml>',
@@ -147,6 +171,12 @@ let g:ReplTypes =
       \ 'prompt'  : '\m\C^tcsh>',
       \ 'syntax'  : 'tcsh'}
   \ }
+
+"  \, 'Lambdabot':
+"      \{'command' : 'lambdabot',
+"      \ 'init'    : '',
+"      \ 'prompt'  : '\m\C^lambdabot>',
+"      \ 'syntax'  : 'haskell'}
 
 " Not operational:
 "  How can we change nested prompt or disable nested at all?
